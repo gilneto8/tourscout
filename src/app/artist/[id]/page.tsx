@@ -1,10 +1,9 @@
-import ArtistDetails from './ArtistDetails';
+import ClientArtistDetails from './ArtistDetails';
 import { LastFMAPI } from '@/lib/api/lastfm';
 
-const ArtistDetail = async ({ params }: { params: { id: string } }) => {
+export default async function ArtistPage({ params }: { params: Promise<{ id: string }> }) {
   const lastfm = new LastFMAPI(process.env.LASTFM_API_KEY!);
-  const artist = await lastfm.getArtistInfo(params.id);
-  return <ArtistDetails artist={artist} />;
-};
-
-export default ArtistDetail;
+  const artist = await lastfm.getArtistInfo((await params).id);
+  
+  return <ClientArtistDetails artist={artist} />;
+}

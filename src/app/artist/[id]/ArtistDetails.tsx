@@ -1,12 +1,31 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import ExpandableDiv from '@/components/ui/expandableDiv';
 import { Tag } from 'lucide-react';
 import sanitizeHtml from 'sanitize-html';
-import { useRouter } from 'next/navigation';
 
-export default function ArtistDetails({ artist }: { artist: any }) {
+type Artist = {
+  name: string;
+  bio: string;
+  tags: string[];
+  similar: Array<{
+    name: string;
+    url: string;
+    mbid?: string;
+  }>;
+};
+
+export default function ClientArtistDetails({ artist }: { artist: Artist }) {
   const router = useRouter();
+
+  const handleSimilarArtistClick = (similar: any) => {
+    if (similar.mbid) {
+      router.push(`/artist/${similar.mbid}`);
+    } else {
+      window.open(similar.url, '_blank');
+    }
+  };
 
   return (
     <div className='max-w-4xl mx-auto p-4'>
@@ -41,10 +60,10 @@ export default function ArtistDetails({ artist }: { artist: any }) {
             <div>
               <h3 className='font-semibold mb-2'>Similar Artists</h3>
               <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
-                {artist.similar.map((similar: any) => (
+                {artist.similar.map((similar) => (
                   <button
                     key={similar.name}
-                    onClick={() => (similar.mbid ? router.push(`/artist/${similar.mbid}`) : window.open(similar.url, '_blank'))}
+                    onClick={() => handleSimilarArtistClick(similar)}
                     className='p-2 border rounded hover:bg-gray-50'
                   >
                     {similar.name}
